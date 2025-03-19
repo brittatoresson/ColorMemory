@@ -1,15 +1,17 @@
-﻿@using ColorMemory.Client.Models
+﻿@using System.Diagnostics
+@using ColorMemory.Client.Models
 @using ColorMemory.Client.Service
+@using ColorMemory.Shared.Models
 
 <div class="memory-grid">
 
-    @if (StartGame)
+    @if (_startGame)
     {
         @foreach (var card in Cards)
         {
-            <div class="memory-card bg-success">
-                <MemoryCard Card="@card" FlipCard="@FlipCard" />
-            </div>
+
+            <MemoryCard Card="@card" FlipCard="@FlipCard" Disable="@CardIsClicked" />
+
         }
     }
     else
@@ -18,12 +20,19 @@
     }
     @if (_matchCards.Count > 1)
     {
-        @foreach (var card in _matchCards)
-        {
-            <div class="memory-card">
-                <MemoryCard Card="@card" FlipCard="@FlipCard" />
-            </div>
-        }
+        <div class="d-flex align-items-center justify-content-center">
+            @foreach (var card in _matchCards)
+            {
+
+                <MemoryCardMatch Card="@card" />
+            }
+        </div>
+    }
+    @if (_displayStatistics)
+    {
+        <Statistics Player="@Player" />
+        <button @onclick="@RestartGame">Start a new game</button>
+
     }
 </div>
 
@@ -33,8 +42,20 @@
     // private ICardService CardService { get; set; }
 
     private List<Card> Cards { get; set; }
+    public bool CardIsClicked { get; set; }
+    public Player Player = new Player()
+        {
+            Id = 1,
+            Name = "First player",
+            Rank = 1,
+            Score = 0,
+        };
+
     private List<Card> _matchCards = [];
-    private bool StartGame;
+    private bool _startGame;
+    private bool _displayStatistics;
+    private int _score = 0;
+    private Stopwatch _gameTimer = new Stopwatch();
 
     private List<Card> GetCards()
     {
@@ -56,7 +77,13 @@
             new Card { Id = 7, PairId = 4, Color = "yellow", BgColor = "bg-warning", IsFlipped = false, IsMatch = false },
             new Card { Id = 8, PairId = 4, Color = "yellow", BgColor = "bg-warning", IsFlipped = false, IsMatch = false },
             new Card { Id = 9, PairId = 5, Color = "purple", BgColor = "bg-secondary", IsFlipped = false, IsMatch = false },
-            new Card { Id = 10, PairId = 5, Color = "purple", BgColor = "bg-secondary", IsFlipped = false, IsMatch = false }
+            new Card { Id = 10, PairId = 5, Color = "purple", BgColor = "bg-secondary", IsFlipped = false, IsMatch = false },
+            new Card { Id = 11, PairId = 6, Color = "orange", BgColor = "bg-warning", IsFlipped = false, IsMatch = false },
+            new Card { Id = 12, PairId = 6, Color = "orange", BgColor = "bg-warning", IsFlipped = false, IsMatch = false },
+            new Card { Id = 13, PairId = 7, Color = "pink", BgColor = "bg-pink", IsFlipped = false, IsMatch = false },
+            new Card { Id = 14, PairId = 7, Color = "pink", BgColor = "bg-pink", IsFlipped = false, IsMatch = false },
+            new Card { Id = 15, PairId = 8, Color = "cyan", BgColor = "bg-info", IsFlipped = false, IsMatch = false },
+            new Card { Id = 16, PairId = 8, Color = "cyan", BgColor = "bg-info", IsFlipped = false, IsMatch = false }
         };
     }
 
@@ -81,42 +108,91 @@
     {
         var cards = GetCards();
         Cards = Shuffle(cards);
-        StartGame = true;
+
+        _startGame = true;
+        _gameTimer.Start();
+
+        Player.Rank++;
+        Player.Score = 0;
     }
 
-    private void FlipCard(int id)
+    private async Task FlipCard(int id)
     {
         foreach (var card in Cards.Where(card => card.Id == id))
         {
             card.IsFlipped = true;
         }
+        await Task.Delay(2000);
+        if (CheckIfCardMatch(id))
+        {
 
-        CheckIfCardMatch(id);
+            CardIsClicked = true;
+            await Task.Delay(2000);
+            CardIsClicked = false;
+        }
+
+        ResetFlippedCards(); // improve this call
     }
 
-    private void CheckIfCardMatch(int id)
+    private void ResetFlippedCards()
+    {
+        if (Cards.FindAll(c => c.IsFlipped).Count == 2)
+        {
+            Cards.ForEach(c => c.IsFlipped = false);
+        }
+    }
+
+    private bool CheckIfCardMatch(int id)
     {
         var pickedCard = Cards.Find(c => c.Id == id);
-        if (pickedCard == null) return;
+        if (pickedCard == null) return false;
 
         var matchingCard = Cards.FirstOrDefault(c => c.PairId == pickedCard.PairId && c.IsFlipped && c.Id != id);
         if (matchingCard != null)
         {
             pickedCard.IsMatch = true;
             matchingCard.IsMatch = true;
-            UpdateCardLists(pickedCard, matchingCard);
+
+            Player.Score++;
+            UpdateCardLists(pickedCard, matchingCard); // discard the returned value with_, this is an async method but not awaited....
+            return true;
+        }
+        else
+        {
+            Player.Score--;
+            return false;
         }
     }
 
     private void UpdateCardLists(Card pickedCard, Card matchingCard)
     {
-        _matchCards.Add(pickedCard);
+        _matchCards.Add(pickedCard); //improve this
         _matchCards.Add(matchingCard);
         Cards.Remove(pickedCard);
         Cards.Remove(matchingCard);
+
+        if (Cards.Count == 0)
+        {
+            _displayStatistics = true;
+        }
+    }
+
+    private void RestartGame()
+    {
+        Player.Score = 0;
+        _matchCards.Clear();
+        Cards.Clear();
+        InitGame();
+        _displayStatistics = false;
     }
 
 
+    private void EndTime()
+    {
+        _gameTimer.Stop();
+        Player.Time = _gameTimer.Elapsed;
+        _gameTimer.Reset();
+    }
 }
 
 

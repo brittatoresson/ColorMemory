@@ -1,0 +1,14 @@
+﻿@using ColorMemory.Shared.Models
+
+<div>
+
+    <h3>Statistics</h3>
+    <h3>Player: @Player.Name</h3>
+    <p> Ranking: @Player.Rank</p>
+    <p>Total time: @Player.Time</p>
+
+</div>
+@code {
+    [Parameter]
+    public Player Player { get; set; }
+}
