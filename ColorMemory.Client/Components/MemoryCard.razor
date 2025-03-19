@@ -1,0 +1,22 @@
+﻿@using ColorMemory.Client.Models
+<h3>Card</h3>
+
+
+<div @onclick="@PickCard">
+    <p>@Card.Color</p>
+</div>
+
+@code {
+    [Parameter]
+    public Card Card { get; set; }
+
+    [Parameter]
+    public EventCallback<int> FlipCard { get; set; }
+
+    private void PickCard()
+    {
+        FlipCard.InvokeAsync(Card.Id);
+
+    }
+
+}

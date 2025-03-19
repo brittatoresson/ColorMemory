@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ColorMemory.Shared.Models
+namespace ColorMemory.Shared.Models;
+
+public interface IGame
 {
-    internal class Game
-    {
-    }
+ 
 }

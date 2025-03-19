@@ -1,5 +1,124 @@
-﻿<h3>Board</h3>
+﻿@using ColorMemory.Client.Models
+@using ColorMemory.Client.Service
+
+<div class="memory-grid">
+
+    @if (StartGame)
+    {
+        @foreach (var card in Cards)
+        {
+            <div class="memory-card bg-success">
+                <MemoryCard Card="@card" FlipCard="@FlipCard" />
+            </div>
+        }
+    }
+    else
+    {
+        <button @onclick="@InitGame"> Start</button>
+    }
+    @if (_matchCards.Count > 1)
+    {
+        @foreach (var card in _matchCards)
+        {
+            <div class="memory-card">
+                <MemoryCard Card="@card" FlipCard="@FlipCard" />
+            </div>
+        }
+    }
+</div>
 
 @code {
 
+    // [Inject]
+    // private ICardService CardService { get; set; }
+
+    private List<Card> Cards { get; set; }
+    private List<Card> _matchCards = [];
+    private bool StartGame;
+
+    private List<Card> GetCards()
+    {
+        // Cards =  await CardService.GetCardsAsync();
+        return GetCardsAsync();
+    }
+
+
+    public List<Card> GetCardsAsync()
+    {
+        return new List<Card>
+        {
+            new Card { Id = 1, PairId = 1, Color = "red", BgColor = "bg-danger", IsFlipped = false, IsMatch = false },
+            new Card { Id = 2, PairId = 1, Color = "red", BgColor = "bg-danger", IsFlipped = false, IsMatch = false },
+            new Card { Id = 3, PairId = 2, Color = "blue", BgColor = "bg-primary", IsFlipped = false, IsMatch = false },
+            new Card { Id = 4, PairId = 2, Color = "blue", BgColor = "bg-primary", IsFlipped = false, IsMatch = false },
+            new Card { Id = 5, PairId = 3, Color = "green", BgColor = "bg-success", IsFlipped = false, IsMatch = false },
+            new Card { Id = 6, PairId = 3, Color = "green", BgColor = "bg-success", IsFlipped = false, IsMatch = false },
+            new Card { Id = 7, PairId = 4, Color = "yellow", BgColor = "bg-warning", IsFlipped = false, IsMatch = false },
+            new Card { Id = 8, PairId = 4, Color = "yellow", BgColor = "bg-warning", IsFlipped = false, IsMatch = false },
+            new Card { Id = 9, PairId = 5, Color = "purple", BgColor = "bg-secondary", IsFlipped = false, IsMatch = false },
+            new Card { Id = 10, PairId = 5, Color = "purple", BgColor = "bg-secondary", IsFlipped = false, IsMatch = false }
+        };
+    }
+
+
+    private List<Card> Shuffle(List<Card> cards)
+    {
+        var currentIndex = cards.Count;
+        var random = new Random();
+
+        while (currentIndex != 0)
+        {
+            int randomIndex = random.Next(currentIndex);
+            currentIndex--;
+
+            // And swap it with the current element using destructuring ( a temporary variable)
+            (cards[currentIndex], cards[randomIndex]) = (cards[randomIndex], cards[currentIndex]);
+        }
+        return cards;
+    }
+
+    private void InitGame()
+    {
+        var cards = GetCards();
+        Cards = Shuffle(cards);
+        StartGame = true;
+    }
+
+    private void FlipCard(int id)
+    {
+        foreach (var card in Cards.Where(card => card.Id == id))
+        {
+            card.IsFlipped = true;
+        }
+
+        CheckIfCardMatch(id);
+    }
+
+    private void CheckIfCardMatch(int id)
+    {
+        var pickedCard = Cards.Find(c => c.Id == id);
+        if (pickedCard == null) return;
+
+        var matchingCard = Cards.FirstOrDefault(c => c.PairId == pickedCard.PairId && c.IsFlipped && c.Id != id);
+        if (matchingCard != null)
+        {
+            pickedCard.IsMatch = true;
+            matchingCard.IsMatch = true;
+            UpdateCardLists(pickedCard, matchingCard);
+        }
+    }
+
+    private void UpdateCardLists(Card pickedCard, Card matchingCard)
+    {
+        _matchCards.Add(pickedCard);
+        _matchCards.Add(matchingCard);
+        Cards.Remove(pickedCard);
+        Cards.Remove(matchingCard);
+    }
+
+
 }
+
+
+@* // how to set ids?
+// create a Interfact to tha games function to able differents impelementsens fo rulse *@

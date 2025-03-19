@@ -1,12 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+namespace ColorMemory.Client.Models;
 
-namespace ColorMemory.Shared.Models
+public interface ICard
 {
-    internal class Card
-    {
-    }
+    int Id { get; init; }
+    int PairId { get; set; }
+    string Color { get; set; }
+    public string BgColor { get; set; }
+
+    bool IsFlipped { get; set; }
+    bool IsMatch { get; set; }
 }
+public class Card : ICard
+{
+    public int Id { get; init; } // how assign id?
+    public int PairId { get; set; }
+    public string Color { get; set; }
+    public string BgColor { get; set; }
+    public bool IsFlipped { get; set; }
+    public bool IsMatch { get; set; }
+}
+
