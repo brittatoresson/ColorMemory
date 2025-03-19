@@ -1,8 +1,8 @@
 ﻿@using ColorMemory.Client.Models
-<h3>Card</h3>
 
-
-<div @onclick="@PickCard">
+@* class="@((Card.IsFlipped ? $"{Card.BgColor} memory-card" : "bg-grey memory-card")) )"> *@
+<div @onclick="@(PickCard)"
+     class="@_cardClasses">
     <p>@Card.Color</p>
 </div>
 
@@ -11,12 +11,35 @@
     public Card Card { get; set; }
 
     [Parameter]
+    public bool Disable { get; set; } = false;
+
+    [Parameter]
     public EventCallback<int> FlipCard { get; set; }
+
+    private string _cardClasses = string.Empty;
 
     private void PickCard()
     {
-        FlipCard.InvokeAsync(Card.Id);
+        if (Disable || Card.IsFlipped) return;
 
+        FlipCard.InvokeAsync(Card.Id);
+    }
+
+    protected override void OnParametersSet()
+    {
+        _cardClasses = GetCardClasses();
+        base.OnParametersSet();
+    }
+
+    private string GetCardClasses()
+    {
+        if (Card.IsFlipped)
+            return $"{Card.BgColor} memory-card";
+
+        if (Disable)
+            return $"{Card.BgColor} memory-card disabled-card"; ;
+
+        return "bg-grey memory-card";
     }
 
 }

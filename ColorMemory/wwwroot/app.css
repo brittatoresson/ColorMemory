@@ -63,7 +63,7 @@ h1:focus {
 .memory-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 16px;
     /*max-width: 400px;*/ /* Adjust based on card size */
     /*margin: auto;*/
 }
@@ -80,4 +80,13 @@ h1:focus {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     font-size: 24px;
     font-weight: bold;
+}
+
+.bg-pink {
+    background-color: #d63384;
+}
+
+.disabled-card {
+    opacity: 0.5;
+    cursor: default;
 }
