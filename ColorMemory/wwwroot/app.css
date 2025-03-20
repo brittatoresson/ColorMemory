@@ -86,6 +86,10 @@ h1:focus {
     background-color: #d63384;
 }
 
+.bg-purple {
+    background-color: #822edd
+}
+
 .disabled-card {
     opacity: 0.5;
     cursor: default;

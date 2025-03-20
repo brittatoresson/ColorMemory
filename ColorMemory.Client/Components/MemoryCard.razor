@@ -1,6 +1,5 @@
 ﻿@using ColorMemory.Client.Models
 
-@* class="@((Card.IsFlipped ? $"{Card.BgColor} memory-card" : "bg-grey memory-card")) )"> *@
 <div @onclick="@(PickCard)"
      class="@_cardClasses">
     <p>@Card.Color</p>
@@ -37,7 +36,10 @@
             return $"{Card.BgColor} memory-card";
 
         if (Disable)
-            return $"{Card.BgColor} memory-card disabled-card"; ;
+            return $"memory-card disabled-card";
+
+        if (Disable && Card.IsFlipped)
+            return $"{Card.BgColor} memory-card disabled-card";
 
         return "bg-grey memory-card";
     }

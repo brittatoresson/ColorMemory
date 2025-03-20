@@ -1,14 +1,20 @@
 ﻿@using ColorMemory.Shared.Models
 
-<div>
+@if (Visible)
+{
+    <div>
+        <h2>Statistics</h2>
+        <h3>Player: @Player.Name</h3>
+        <p>Ranking: @Player.Rank</p>
+        <p>Total time: @Player.Time sek</p>
 
-    <h3>Statistics</h3>
-    <h3>Player: @Player.Name</h3>
-    <p> Ranking: @Player.Rank</p>
-    <p>Total time: @Player.Time</p>
+    </div>
+}
 
-</div>
 @code {
     [Parameter]
-    public Player Player { get; set; }
+    public required Player Player { get; set; }
+
+    [Parameter]
+    public bool Visible { get; set; }
 }

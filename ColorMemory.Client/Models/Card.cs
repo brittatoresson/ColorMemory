@@ -7,13 +7,12 @@ public interface ICard
     int PairId { get; set; }
     string Color { get; set; }
     public string BgColor { get; set; }
-
     bool IsFlipped { get; set; }
     bool IsMatch { get; set; }
 }
 public class Card : ICard
 {
-    public int Id { get; init; } // how assign id?
+    public int Id { get; init; } 
     public int PairId { get; set; }
     public string Color { get; set; }
     public string BgColor { get; set; }
