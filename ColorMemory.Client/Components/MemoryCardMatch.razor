@@ -1,0 +1,12 @@
+﻿@using ColorMemory.Client.Models
+
+<div class="card-front @(Card.BgColor) text-white">
+    @Card.Color
+</div>
+
+
+@code {
+
+    [Parameter]
+    public Card? Card { get; set; }
+}

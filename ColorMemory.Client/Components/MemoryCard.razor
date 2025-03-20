@@ -1,0 +1,47 @@
+﻿@using ColorMemory.Client.Models
+
+<div @onclick="@(PickCard)"
+     class="@_cardClasses">
+    <p>@Card.Color</p>
+</div>
+
+@code {
+    [Parameter]
+    public Card Card { get; set; }
+
+    [Parameter]
+    public bool Disable { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<int> FlipCard { get; set; }
+
+    private string _cardClasses = string.Empty;
+
+    private void PickCard()
+    {
+        if (Disable || Card.IsFlipped) return;
+
+        FlipCard.InvokeAsync(Card.Id);
+    }
+
+    protected override void OnParametersSet()
+    {
+        _cardClasses = GetCardClasses();
+        base.OnParametersSet();
+    }
+
+    private string GetCardClasses()
+    {
+        if (Card.IsFlipped)
+            return $"{Card.BgColor} memory-card";
+
+        if (Disable)
+            return $"memory-card disabled-card";
+
+        if (Disable && Card.IsFlipped)
+            return $"{Card.BgColor} memory-card disabled-card";
+
+        return "bg-grey memory-card";
+    }
+
+}

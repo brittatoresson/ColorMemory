@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+namespace ColorMemory.Client.Models;
 
-namespace ColorMemory.Shared.Models
+public interface IGame
 {
-    internal class Game
-    {
-    }
+}
+
+public class Game : IGame
+{
 }

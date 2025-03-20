@@ -1,5 +1,34 @@
-﻿<h3>Board</h3>
-
-@code {
-
+﻿
+@if (!GameService.IsGameActive)
+{
+    <button class="btn btn-primary" @onclick="StartGame">Start memory</button>
 }
+else
+{
+    <h3>Total points: @GameService.Points</h3>
+
+    <div class="memory-grid">
+        @foreach (var card in GameService.Cards)
+        {
+            <MemoryCard Card="card" FlipCard="FlipCard" Disable="@_disableClick" />
+        }
+    </div>
+
+    @if (GameService.MatchedCards.Count > 0)
+    {
+        <div class="d-flex align-items-center justify-content-center">
+            @foreach (var card in GameService.MatchedCards)
+            {
+                <MemoryCardMatch Card="card" />
+            }
+        </div>
+    }
+}
+<Statistics Player="@_player" Visible="@_displayStatistics" />
+
+@* Nice to have *@
+@* Show win/lose of card *@
+@* Show timer *@
+@* Add player *@
+@* Save score *@
+@* Toggle: if (GameService.MatchedCards.Count == 16) *@
