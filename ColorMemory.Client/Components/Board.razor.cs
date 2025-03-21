@@ -9,10 +9,10 @@ public partial class Board
     [Inject] public required IGameService GameService { get; set; }
 
     private bool _displayStatistics;
-    private Stopwatch _gameTimer = new Stopwatch();
     private bool _disableClick;
+    private Stopwatch _gameTimer = new();
 
-    private Player _player = new Player()
+    private Player _player = new()
     {
         Id = 1,
         Name = "First player",
@@ -29,7 +29,7 @@ public partial class Board
         GameService.FlipCard(id);
         _player.Points = GameService.Points;
 
-        if (GameService.MatchedCards.Count == 16)
+        if (!GameService.IsGameActive)
         {
             GameOver();
         }

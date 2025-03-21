@@ -64,8 +64,6 @@ h1:focus {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    /*max-width: 400px;*/ /* Adjust based on card size */
-    /*margin: auto;*/
 }
 
 .memory-card {

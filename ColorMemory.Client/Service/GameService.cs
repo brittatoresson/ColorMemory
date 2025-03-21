@@ -40,7 +40,7 @@ namespace ColorMemory.Client.Service
 
                 if (Cards.All(c => c.IsMatch))
                 {
-                    EndGame();
+                    IsGameActive = false;
                 }
             }
         }
@@ -59,10 +59,7 @@ namespace ColorMemory.Client.Service
             }
         }
 
-        private void EndGame()
-        {
-            IsGameActive = false;
-        }
+     
 
         private List<Card> GenerateCards()
         {
